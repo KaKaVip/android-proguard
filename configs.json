@@ -1,0 +1,23 @@
+[{
+        "name": "Android",
+        "file": "proguard-android.pro",
+        "default": true
+    },
+    {
+        "name": "OkHttp 1.x",
+        "file": "proguard-okhttp.pro"
+    },
+    {
+        "name": "OkHttp 3.x",
+        "file": "proguard-okhttp3.pro",
+        "default": true
+    },
+    {
+        "name": "Retrofit 2.x",
+        "file": "proguard-retrofit2.pro"
+    },
+    {
+        "name": "Retrofit 1.x",
+        "file": "proguard-retrofit.pro"
+    }
+]

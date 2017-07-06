@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Generator Android Proguard</title>
+
+  <!-- Bootstrap -->
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://bootswatch.com/flatly/bootstrap.min.css" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous">
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-okaidia.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.js"></script>
+  <script>
+    var proguard = []
+
+    function start() {
+      console.log("ready start!");
+      loadLibs();
+    }
+
+    function loadLibs() {
+      $("#progressbar").show();
+      $.getJSON("configs.json", function (data) {
+        proguard = data;
+        drawItem();
+        updateDrawData();
+      }).always(function () {
+        console.log("   progressbar  hide ")
+        $("#progressbar").css("visibility", "hidden");
+      });
+    }
+
+    function drawItem() {
+      console.log("   drawItem  ")
+      $.each(proguard, function (key, val) {
+        var items = [];
+        $("#libs ul").append("<li class=\"list-group-item\"><input class='libs" + key +
+          "' type=\"checkbox\" value=\"" + key +
+          "\" " + (val
+            .default ? "checked" :
+            "") +
+          "> " + val.name +
+          "</input></li>");
+        ///console.log("Key: " + key + "/ value: " + val.name);
+        $('input:checkbox.libs' + key).click(function () {
+          updateDrawData();
+          //console.log("Checked : " + $('input:checkbox.libs:checked').length);
+        })
+      })
+    }
+
+    function updateDrawData() {
+      console.log("   UpdateDrawData  ")
+      $("#proguard code").html("")
+      $.each($('input:checkbox:checked'), function (key, val) {
+        var index = val.value;
+        var item = proguard[index]
+        console.log("Selected: " + item.name)
+        if (!item.loaded) {
+          loadData(index, item.file)
+        } else {
+          $("#proguard code").append(item.data)
+          $("#proguard code").append("\n\n")
+        }
+      });
+    }
+
+    function loadData(id, file) {
+      var fileSrc = "libraries/" + file;
+      console.log("fileSrc: " + fileSrc)
+      $("#progressbar").show()
+      $.get(fileSrc, function (data) {
+        proguard[id].data = data
+        proguard[id].loaded = true
+        $("#proguard code").append(data)
+        $("#proguard code").append("\n\n")
+      }).always(function () {
+        $("#progressbar").css("visibility", "hidden");
+      });
+    }
+
+    $(function () {
+      start()
+    });
+  </script>
+  <style>
+    body {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    pre {
+      height: auto;
+      max-height: 600px;
+      overflow: auto;
+      background-color: #eeeeee;
+      word-break: normal !important;
+      word-wrap: normal !important;
+      white-space: pre !important;
+    }
+
+    ​
+  </style>
+</head>
+
+<body>
+  <h1>Generator Android Proguard</h1>
+  <div class="progress progress-striped active" id="progressbar">
+    <div class="progress-bar" style="width: 100%"></div>
+  </div>
+  <div class="row">
+    <div class="col-lg-7">
+      <h3>Proguard</h3>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <pre id="proguard" class="language-markup"><code id="source-code"></code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-lg-offset-1">
+      <h3>Dependencies</h3>
+      <div id="libs">
+        <ul class="list-group"></ul>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
