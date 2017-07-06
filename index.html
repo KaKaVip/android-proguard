@@ -28,10 +28,7 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
     crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-okaidia.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css"
-  />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.js"></script>
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=java&amp;skin=desert"></script>
   <script>
     var proguard = []
 
@@ -73,7 +70,7 @@
 
     function updateDrawData() {
       console.log("   UpdateDrawData  ")
-      $("#proguard code").html("")
+      $("#proguard").html("")
       $.each($('input:checkbox:checked'), function (key, val) {
         var index = val.value;
         var item = proguard[index]
@@ -81,8 +78,8 @@
         if (!item.loaded) {
           loadData(index, item.file)
         } else {
-          $("#proguard code").append(item.data)
-          $("#proguard code").append("\n\n")
+          $("#proguard").append(item.data)
+          $("#proguard").append("\n\n")
         }
       });
     }
@@ -94,8 +91,8 @@
       $.get(fileSrc, function (data) {
         proguard[id].data = data
         proguard[id].loaded = true
-        $("#proguard code").append(data)
-        $("#proguard code").append("\n\n")
+        $("#proguard").append(data)
+        $("#proguard").append("\n\n")
       }).always(function () {
         $("#progressbar").css("visibility", "hidden");
       });
@@ -115,7 +112,6 @@
       height: auto;
       max-height: 600px;
       overflow: auto;
-      background-color: #eeeeee;
       word-break: normal !important;
       word-wrap: normal !important;
       white-space: pre !important;
@@ -123,15 +119,15 @@
 
     ​
   </style>
+
 </head>
 
 <body>
-  <h1>Generator Android Proguard</h1>
+  <h2>Generator Android Proguard</h2>
   <div class="progress progress-striped active" id="progressbar">
     <div class="progress-bar" style="width: 100%"></div>
   </div>
   <div class="row">
-
     <div class="col-lg-3">
       <h3>Dependencies</h3>
       <div id="libs">
@@ -141,11 +137,7 @@
 
     <div class="col-lg-9">
       <h3>Proguard</h3>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <pre id="proguard" class="language-markup"><code id="source-code"></code></pre>
-        </div>
-      </div>
+      <pre id="proguard" class="prettyprint"></pre>
     </div>
 
   </div>
